@@ -16,12 +16,8 @@
                 schemes: [
                     'https'
                 ],
-                consumes: [
-                    'application/json'
-                ],
-                produces: [
-                    'application/json'
-                ],
+                consumes: 'application/json',
+                produces: 'application/json',
                 paths: []
             };
 
@@ -94,10 +90,10 @@
                             description: 'HTTP ' + method.meta.responseCode + ' response'
                         };
                         if (copy.consumes) {
-                            copy.consumes = [ copy.consumes ];
+                            copy.consumes = [copy.consumes];
                         }
                         if (copy.produces) {
-                            copy.produces = [ copy.produces ];
+                            copy.produces = [copy.produces];
                         }
                         delete copy.meta;
                     }
@@ -125,8 +121,8 @@
                 }
 
                 var output = angular.copy($scope.api);
-                output.consumes = [ output.consumes ];
-                output.produces = [ output.produces ];
+                output.consumes = [output.consumes];
+                output.produces = [output.produces];
                 output.paths = {};
                 angular.forEach($scope.api.paths, function (pathItem) {
                     var outputPathItem = {},
