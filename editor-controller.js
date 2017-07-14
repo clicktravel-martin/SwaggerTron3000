@@ -1,85 +1,74 @@
 ;(function (angular) {
     'use strict';
 
-    angular.module('swaggertron3000/main', [
-        'swaggertron3000/method-directive'
+    angular.module('editor-controller', [
+        'constants-service',
+        'swaggergenerator-service',
+        'endpoint-directive'
     ])
-        .controller('Main', function ($scope) {
+        .controller('Editor', function ($scope, constants, swaggerGenerator) {
+
+            $scope.Platform = constants.Platform;
+            $scope.AuthType = constants.AuthType;
 
             $scope.api = {
-                swagger: '2.0',
-                info: {
-                    title: undefined,
-                    version: '1'
-                },
+                title: undefined,
+                description: undefined,
+                version: '1',
                 host: undefined,
-                schemes: [
-                    'https'
-                ],
-                consumes: 'application/json',
-                produces: 'application/json',
-                paths: []
+                serviceName: undefined,
+                authType: constants.AuthType.API_KEY,
+                platform: constants.Platform.PIONEER
             };
 
-            $scope.addPath = function () {
-                $scope.api.paths.push({
-                    meta: {
-                        url: undefined
-                    },
-                    get: {
-                        meta: {
-                            label: 'GET',
-                            labelClass: 'label-primary',
-                            enabled: false,
-                            responseCode: '200',
-                            consumes: false
-                        },
+            $scope.endpoints = [];
+
+            $scope.addEndpoint = function () {
+                $scope.endpoints.push({
+                    path: undefined,
+                    method: constants.Method.GET,
+                    pathParams: [],
+                    queryParams: [],
+                    request: {},
+                    response: {
+                        status: constants.Status['200'],
                         description: undefined,
-                        produces: undefined
-                    },
-                    post: {
-                        meta: {
-                            label: 'POST',
-                            labelClass: 'label-success',
-                            enabled: false,
-                            responseCode: '201',
-                            consumes: true
-                        },
-                        description: undefined,
-                        produces: undefined,
-                        consumes: undefined
-                    },
-                    put: {
-                        meta: {
-                            label: 'PUT',
-                            labelClass: 'label-warning',
-                            enabled: false,
-                            responseCode: '204',
-                            consumes: true
-                        },
-                        description: undefined,
-                        produces: undefined,
-                        consumes: undefined
-                    },
-                    delete: {
-                        meta: {
-                            label: 'DELETE',
-                            labelClass: 'label-danger',
-                            enabled: false,
-                            responseCode: '204',
-                            consumes: false
-                        },
-                        description: undefined,
-                        produces: undefined
+                        schema: undefined,
+                        mediaType: undefined
                     }
                 });
             };
 
-            $scope.removePath = function (path) {
-                $scope.api.paths.splice($scope.api.paths.indexOf(path), 1);
+            $scope.cloneEndpoint = function (endpoint) {
+                $scope.endpoints.push(angular.copy(endpoint));
             };
 
+            $scope.removeEndpoint = function (endpoint) {
+                $scope.endpoints.splice($scope.endpoints.indexOf(endpoint), 1);
+            };
+
+            // $scope.api = {
+            //     swagger: '2.0',
+            //     info: {
+            //         title: undefined,
+            //         version: '1'
+            //     },
+            //     host: undefined,
+            //     schemes: [
+            //         'https'
+            //     ],
+            //     consumes: 'application/json',
+            //     produces: 'application/json',
+            //     paths: []
+            // };
+
             $scope.generateSwagger = function () {
+                var output = swaggerGenerator.generate($scope.api, $scope.endpoints);
+                $scope.swagger = angular.toJson(output, 4);
+            };
+
+            // FIXME remove
+            $scope.generateSwaggerOld = function () {
 
                 function copyMethodIfEnabled(method) {
                     var copy;
@@ -169,7 +158,7 @@
 
             // #######################################################################
 
-            $scope.addPath();
+            $scope.addEndpoint();
 
         });
 
