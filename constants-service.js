@@ -10,7 +10,7 @@
                 },
 
                 AuthType: {
-                    API_KEY: 'API key',
+                    BASIC: 'Basic',
                     OAUTH: 'OAuth'
                 },
 

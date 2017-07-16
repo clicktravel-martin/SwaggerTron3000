@@ -93,7 +93,7 @@
             }
 
             function addAuth(swagger, api) {
-                if (api.authType === constants.AuthType.API_KEY) {
+                if (api.authType === constants.AuthType.BASIC) {
                     swagger.securityDefinitions.basic = {
                         type: 'basic',
                         description: '3Scale app ID (username) and key (password)'
@@ -178,8 +178,17 @@
                         $ref: '#/definitions/' + endpoint.response.schema
                     };
                 }
+                if (endpoint.response.locationHeader) {
+                    method.responses[endpoint.response.status].headers = {
+                        'Location': {
+                            type: 'string'
+                        }
+                    };
+                }
 
-                swagger.paths[cleanPath] = {};
+                if (!swagger.paths[cleanPath]) {
+                    swagger.paths[cleanPath] = {};
+                }
                 swagger.paths[cleanPath][endpoint.method.toLowerCase()] = method;
             }
 
@@ -191,6 +200,7 @@
                     swagger.info.description = api.description || undefined;
                     swagger.info.version = api.version;
                     swagger.host = api.host;
+                    swagger['x-serviceName'] = api.serviceName;
 
                     addAuth(swagger, api);
                     angular.forEach(endpoints, function (endpoint) {
